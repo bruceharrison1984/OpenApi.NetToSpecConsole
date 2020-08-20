@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.CSharpAnnotations.DocumentGeneration;
+﻿using Fclp.Internals.Extensions;
+using Microsoft.OpenApi.CSharpAnnotations.DocumentGeneration;
 using Microsoft.OpenApi.CSharpAnnotations.DocumentGeneration.Models;
 using Microsoft.OpenApi.Extensions;
 using System;
@@ -11,7 +12,7 @@ namespace XmlToOpenApi
 {
     public static class SpecWriter
     {
-        public static void Generate(Arguments args)
+        public static string Generate(Arguments args)
         {
             var xmlDocs = args.XmlFilenames.Select(x => XDocument.Load(x)).ToList();
 
@@ -21,6 +22,16 @@ namespace XmlToOpenApi
             var generator = new OpenApiGenerator();
             var openApiDocuments = generator.GenerateDocuments(input, out generationDiagnostic);
 
+            var documentErrors = generationDiagnostic.DocumentGenerationDiagnostic.Errors;
+            var operationErrors = generationDiagnostic.OperationGenerationDiagnostics.SelectMany(x => x.Errors);
+
+            if (!documentErrors.IsNullOrEmpty() || !operationErrors.IsNullOrEmpty())
+            {
+                var compiledDocumentErrors = string.Join("\n\r", documentErrors.Select(x => $"- {x.ExceptionType}|{x.Message}"));
+                var compiledOperationErrors = string.Join("\n\r", operationErrors.Select(x => $"- {x.ExceptionType}|{x.Message}"));
+                throw new Exception(string.Join("\n\r", compiledDocumentErrors, compiledOperationErrors));
+            }
+
             if (args.Verbose)
                 PrintDiagnostics(generationDiagnostic);
 
@@ -29,7 +40,9 @@ namespace XmlToOpenApi
                 outputSpec = openApiDocuments.First().Value.SerializeAsYaml(args.OpenApiSpecVersion);
             outputSpec = openApiDocuments.First().Value.SerializeAsJson(args.OpenApiSpecVersion);
 
+            var outputFilename = BuildFilename(args.OutputFilename, args.OutputYaml);
             File.WriteAllText(BuildFilename(args.OutputFilename, args.OutputYaml), outputSpec);
+            return outputFilename;
         }
 
         private static string BuildFilename(string filename, bool isYaml)
@@ -47,17 +60,6 @@ namespace XmlToOpenApi
             {
                 Console.WriteLine($"Operation:{ogd.OperationMethod}");
                 Console.WriteLine($"Path:{ogd.Path}");
-                foreach (var error in ogd.Errors.Select(x => $"{x.ExceptionType}-{x.Message}"))
-                    Console.WriteLine($"Error:{error}");
-            }
-
-            if (generationDiagnostic.DocumentGenerationDiagnostic.Errors.Count > 0)
-            {
-                Console.WriteLine($"### Document Generation Errors ###");
-                foreach (var error in generationDiagnostic.DocumentGenerationDiagnostic.Errors.Select(x => $"Error: {x.ExceptionType}-{x.Message}"))
-                {
-                    Console.WriteLine(error);
-                }
             }
         }
     }

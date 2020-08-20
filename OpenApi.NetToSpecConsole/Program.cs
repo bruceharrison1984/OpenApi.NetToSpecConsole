@@ -3,21 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using XmlToOpenApi.Models;
 
 namespace XmlToOpenApi
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             try
             {
                 var p = new FluentCommandLineParser<Arguments>();
 
-                p.Setup(arg => arg.XmlFilenames).As('x', "xmlFilenames").WithDescription("Path to xml documents").Required().Callback(DoFilesExist);
-                p.Setup(arg => arg.AssemblyFilenames).As('a', "assemblyFilenames").WithDescription("Path to assembly(*.dll) files").Required().Callback(DoFilesExist);
+                p.Setup(arg => arg.XmlFilenames).As('x', "xmlFilenames").WithDescription("Path to xml documents").Required();
+                p.Setup(arg => arg.AssemblyFilenames).As('a', "assemblyFilenames").WithDescription("Path to assembly(*.dll) files").Required();
                 p.Setup(arg => arg.OutputFilename).As('o', "outputFilename").WithDescription("Name of the output file(without extension)");
                 p.Setup(arg => arg.OutputYaml).As('y', "outputYaml").WithDescription("Output YAML instead of JSON");
                 p.Setup(arg => arg.DocumentVersion).As('d', "documentVersion").WithDescription("What version of API is this");
@@ -34,12 +33,13 @@ namespace XmlToOpenApi
                     Console.WriteLine($"Error with the following args: {argNames}");
                     return;
                 }
-                SpecWriter.Generate(p.Object);
+                var outputFilename = SpecWriter.Generate(p.Object);
+                Console.WriteLine($"### Successfully wrote '{outputFilename}' ###");
             }
             catch (Exception e)
             {
+                Console.WriteLine("### Critical Error Occured ###");
                 Console.WriteLine(e.Message);
-                Console.WriteLine("Error occured, exiting...");
                 return;
             }
         }
