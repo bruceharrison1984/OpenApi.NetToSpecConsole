@@ -13,8 +13,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Branch name
-      run: echo Running on branch ${GITHUB_REF##*/}
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
+      id: extract_branch
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -45,8 +47,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${GITHUB_REF##}
-        release_name: Release ${GITHUB_REF##}
+        tag_name: ${{ steps.extract_branch.outputs.branch }}
+        release_name: Release ${{ steps.extract_branch.outputs.branch }}
         draft: false
         prerelease: false
     - name: Upload Windows Release Asset
