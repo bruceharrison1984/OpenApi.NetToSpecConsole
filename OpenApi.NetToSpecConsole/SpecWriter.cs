@@ -3,6 +3,7 @@ using Microsoft.OpenApi.CSharpAnnotations.DocumentGeneration;
 using Microsoft.OpenApi.CSharpAnnotations.DocumentGeneration.Models;
 using Microsoft.OpenApi.Extensions;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -14,6 +15,8 @@ namespace XmlToOpenApi
     {
         public static string Generate(Arguments args)
         {
+            DoFilesExist(args.XmlFilenames.Concat(args.AssemblyFilenames).ToList());
+
             var xmlDocs = args.XmlFilenames.Select(x => XDocument.Load(x)).ToList();
 
             var input = new OpenApiGeneratorConfig(xmlDocs, args.AssemblyFilenames, args.DocumentVersion, args.FilterSetVersion);
@@ -51,6 +54,17 @@ namespace XmlToOpenApi
             if (isYaml)
                 return filepath + ".yaml";
             return filepath + ".json";
+        }
+
+        private static void DoFilesExist(List<string> filenames)
+        {
+            foreach (var filename in filenames)
+            {
+                if (!File.Exists(filename))
+                {
+                    throw new FileNotFoundException($"File does not exist: '{filename}'");
+                }
+            }
         }
 
         private static void PrintDiagnostics(GenerationDiagnostic generationDiagnostic)

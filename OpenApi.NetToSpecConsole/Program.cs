@@ -43,16 +43,5 @@ namespace XmlToOpenApi
                 return;
             }
         }
-
-        private static void DoFilesExist(List<string> filenames)
-        {
-            foreach (var filename in filenames)
-            {
-                if (!File.Exists(filename))
-                {
-                    throw new FileNotFoundException($"File does not exist: '{filename}'");
-                }
-            }
-        }
     }
 }
