@@ -15,11 +15,12 @@ namespace XmlToOpenApi
     {
         public static string Generate(Arguments args)
         {
-            DoFilesExist(args.XmlFilenames.Concat(args.AssemblyFilenames).ToList());
+            var xmlPaths = GetAbsolutePaths(args.XmlFilenames);
+            var assemblyPaths = GetAbsolutePaths(args.AssemblyFilenames);
 
-            var xmlDocs = args.XmlFilenames.Select(x => XDocument.Load(x)).ToList();
+            var xmlDocs = xmlPaths.Select(x => XDocument.Load(x)).ToList();
 
-            var input = new OpenApiGeneratorConfig(xmlDocs, args.AssemblyFilenames, args.DocumentVersion, args.FilterSetVersion);
+            var input = new OpenApiGeneratorConfig(xmlDocs, assemblyPaths, args.DocumentVersion, args.FilterSetVersion);
 
             var generationDiagnostic = new GenerationDiagnostic();
             var generator = new OpenApiGenerator();
@@ -56,15 +57,16 @@ namespace XmlToOpenApi
             return filepath + ".json";
         }
 
-        private static void DoFilesExist(List<string> filenames)
+        private static List<string> GetAbsolutePaths(List<string> filenames)
         {
+            var absolutePaths = new List<string>();
             foreach (var filename in filenames)
             {
-                if (!File.Exists(filename))
-                {
-                    throw new FileNotFoundException($"File does not exist: '{filename}'");
-                }
+                if (!File.Exists(filename)) throw new FileNotFoundException($"File does not exist: '{filename}'");
+
+                absolutePaths.Add(Path.GetFullPath(filename));               
             }
+            return absolutePaths;
         }
 
         private static void PrintDiagnostics(GenerationDiagnostic generationDiagnostic)
