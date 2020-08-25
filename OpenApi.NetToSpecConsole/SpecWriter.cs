@@ -41,8 +41,13 @@ namespace XmlToOpenApi
 
             string outputSpec;
             if (args.OutputYaml)
+            {
                 outputSpec = openApiDocuments.First().Value.SerializeAsYaml(args.OpenApiSpecVersion);
-            outputSpec = openApiDocuments.First().Value.SerializeAsJson(args.OpenApiSpecVersion);
+            }
+            else
+            {
+                outputSpec = openApiDocuments.First().Value.SerializeAsJson(args.OpenApiSpecVersion);
+            }
 
             var outputFilename = BuildFilename(args.OutputFilename, args.OutputYaml);
             File.WriteAllText(BuildFilename(args.OutputFilename, args.OutputYaml), outputSpec);
@@ -64,7 +69,7 @@ namespace XmlToOpenApi
             {
                 if (!File.Exists(filename)) throw new FileNotFoundException($"File does not exist: '{filename}'");
 
-                absolutePaths.Add(Path.GetFullPath(filename));               
+                absolutePaths.Add(Path.GetFullPath(filename));
             }
             return absolutePaths;
         }
