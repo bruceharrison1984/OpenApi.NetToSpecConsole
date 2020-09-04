@@ -23,6 +23,7 @@ namespace XmlToOpenApi
                 p.Setup(arg => arg.FilterSetVersion).As('f', "filterSetVersion").WithDescription("What version of OpenAPI should the document be written in");
                 p.Setup(arg => arg.Verbose).As('v', "verbose").WithDescription("Enable detailed logging");
                 p.Setup(arg => arg.OpenApiSpecVersion).As('s', "openApiSpecVersion").WithDescription("What version of OpenAPI spec should the document be written in");
+                p.Setup(arg => arg.AdvancedConfigurationPath).As('c', "advancedConfig").WithDescription("Advanced configuration document path");
                 p.SetupHelp("?", "help").Callback(text => Console.WriteLine(text));
                 
                 var result = p.Parse(args);

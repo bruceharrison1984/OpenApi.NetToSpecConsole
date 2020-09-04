@@ -14,5 +14,6 @@ namespace XmlToOpenApi.Models
         public string OutputFilename { get; set; }
         public bool Verbose { get; set; } = false;
         public List<string> XmlFilenames { get; set; }
+        public string AdvancedConfigurationPath { get; set; }
     }
 }

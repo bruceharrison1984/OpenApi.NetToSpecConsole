@@ -22,6 +22,13 @@ namespace XmlToOpenApi
 
             var input = new OpenApiGeneratorConfig(xmlDocs, assemblyPaths, args.DocumentVersion, args.FilterSetVersion);
 
+            if (!string.IsNullOrEmpty(args.AdvancedConfigurationPath))
+            {
+                Console.WriteLine("Advanced configuration setting detected");
+                if (!File.Exists(args.AdvancedConfigurationPath)) throw new FileNotFoundException($"File does not exist: '{args.AdvancedConfigurationPath}'");
+                input.AdvancedConfigurationXmlDocument = XDocument.Load(Path.GetFullPath(args.AdvancedConfigurationPath));
+            }
+
             var generationDiagnostic = new GenerationDiagnostic();
             var generator = new OpenApiGenerator();
             var openApiDocuments = generator.GenerateDocuments(input, out generationDiagnostic);

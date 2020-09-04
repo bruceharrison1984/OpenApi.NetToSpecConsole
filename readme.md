@@ -18,6 +18,7 @@ $ ./OpenApi.NetToSpecConsole.exe -?
         v:verbose                       Enable detailed logging
         x:xmlFilenames                  Path to xml documents
         y:outputYaml                    Output YAML instead of JSON
+        c:advancedConfig                Path to an advanced configuration file
 ```
 
 ## Console Example
@@ -27,7 +28,7 @@ $ ./OpenApi.NetToSpecConsole.exe -?
 
 ## Post-build Step (*.csproj)
 ```xml
-  <Target Name="CreateOpenApiSpec" AfterTargets="AfterBuild" Condition="'$(Configuration)' != 'Release'">
-    <Exec Command="./OpenApi.NetToSpecConsole.exe --assemblyFilenames &quot;$(OutDir)\bin\MyApp.dll&quot; --xmlFilenames &quot;$$(OutDir)\bin\MyApp.xml&quot;" />
+  <Target Name="CreateOpenApiSpec" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'OpenApi'">
+    <Exec Command=".\OpenApi\OpenApi.NetToSpecConsole.exe -a bin\$(Configuration)\$(TargetFramework)\Api.dll bin\$(Configuration)\$(TargetFramework)\Data.dll -x bin\$(Configuration)\$(TargetFramework)\Api.xml -o .\OpenApi\openapi_spec.json -v " />
   </Target>
 ```
