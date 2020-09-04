@@ -62,25 +62,25 @@ jobs:
         asset_path: ./OpenApi.NetToSpecConsole-win-x64.zip
         asset_name: OpenApi.NetToSpecConsole-win-x64.zip
         asset_content_type: application/zip
-#     - name: Upload Linux Release Asset
-#       if: contains(github.ref, 'release')
-#       id: upload-linux-release-asset 
-#       uses: actions/upload-release-asset@v1
-#       env:
-#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#       with:
-#         upload_url: ${{ steps.create_release.outputs.upload_url }}
-#         asset_path: ./OpenApi.NetToSpecConsole-linux-x64.zip
-#         asset_name: OpenApi.NetToSpecConsole-linux-x64.zip
-#         asset_content_type: application/zip
-#     - name: Upload OSX Release Asset
-#       if: contains(github.ref, 'release')
-#       id: upload-osx-release-asset 
-#       uses: actions/upload-release-asset@v1
-#       env:
-#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#       with:
-#         upload_url: ${{ steps.create_release.outputs.upload_url }}
-#         asset_path: ./OpenApi.NetToSpecConsole-osx-x64.zip
-#         asset_name: OpenApi.NetToSpecConsole-osx-x64.zip
-#         asset_content_type: application/zip
+    - name: Upload Linux Release Asset
+      if: contains(github.ref, 'release')
+      id: upload-linux-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./OpenApi.NetToSpecConsole-linux-x64.zip
+        asset_name: OpenApi.NetToSpecConsole-linux-x64.zip
+        asset_content_type: application/zip
+    - name: Upload OSX Release Asset
+      if: contains(github.ref, 'release')
+      id: upload-osx-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./OpenApi.NetToSpecConsole-osx-x64.zip
+        asset_name: OpenApi.NetToSpecConsole-osx-x64.zip
+        asset_content_type: application/zip
