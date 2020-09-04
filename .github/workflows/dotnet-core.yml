@@ -34,12 +34,12 @@ jobs:
       id: publish_linux
       run: |
         dotnet publish -c Release -r linux-x64 -o ./build/linux-x64 -p:PublishSingleFile=true --no-self-contained -v d
-        zip --junk-paths ./OpenApi.NetToSpecConsole-linux-x64.zip ./build/linux-x64/OpenApi.NetToSpecConsole.exe
+        zip --junk-paths ./OpenApi.NetToSpecConsole-linux-x64.zip ./build/linux-x64/OpenApi.NetToSpecConsole
     - name: Publish OSX
       id: publish_osx
       run: |
         dotnet publish -c Release -r osx-x64 -o ./build/osx-x64 -p:PublishSingleFile=true --no-self-contained -v d
-        zip --junk-paths ./OpenApi.NetToSpecConsole-osx-x64.zip ./build/osx-x64/OpenApi.NetToSpecConsole.exe
+        zip --junk-paths ./OpenApi.NetToSpecConsole-osx-x64.zip ./build/osx-x64/OpenApi.NetToSpecConsole
     - name: Create Release
       if: contains(github.ref, 'release')
       id: create_release
